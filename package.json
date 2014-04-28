@@ -1,0 +1,8 @@
+{
+  "volo": {
+    "baseUrl": "src/lib",
+    "dependencies": {
+      "oauth-io": "github:oauth-io/oauth-js/master"
+    }
+  }
+}
