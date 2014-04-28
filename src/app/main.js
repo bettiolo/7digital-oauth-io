@@ -48,6 +48,14 @@ function init() {
 			processLinkedinResult(result);
 		});
 	});
+
+    var youtubeButton = document.getElementById('load-youtube');
+    youtubeButton.addEventListener('click', function () {
+        OAuth.popup('youtube', function(err, result) {
+            showError(err);
+            processYoutubeResult(result);
+        });
+    });
 }
 
 function showError(err) {
@@ -62,48 +70,37 @@ function showError(err) {
 function processFacebookResult(result) {
 	"use strict";
 
+    console.log(result);
 	result.get('/me').done(function(data) {
-		processFacebookData(data);
-	});
-}
-
-function processFacebookData(data) {
-	"use strict";
-
-	var facebookInfo = document.getElementById('facebook-info');
-	facebookInfo.innerText = data.name + ' - ' + data.email;
+        var facebookInfo = document.getElementById('facebook-info');
+        facebookInfo.innerText = data.name + ' - ' + data.email;
+    });
 }
 
 function processGithubResult(result) {
     "use strict";
 
+    console.log(result);
     result.get('/user').done(function(data) {
-        processGithubData(data);
+        console.log(data);
+        var githubInfo = document.getElementById('github-info');
+        githubInfo.innerText = data.name + ' - ' + data.email;
     });
-}
-
-function processGithubData(data) {
-    "use strict";
-
-    var githubInfo = document.getElementById('github-info');
-    githubInfo.innerText = data.name + ' - ' + data.email;
 }
 
 function process7dResult(result) {
 	"use strict";
 
 	console.log(result);
-
-//	result.get('/me').done(function(data) {
-//		processFacebookData(data);
-//	});
+	result.get('/status').done(function(data) {
+		processFacebookData(data);
+	});
 }
 
 function processDropboxResult(result) {
 	"use strict";
 
 	console.log(result);
-
 //	result.get('/me').done(function(data) {
 //		processFacebookData(data);
 //	});
@@ -113,20 +110,23 @@ function processLinkedinResult(result) {
 	"use strict";
 
 	console.log(result);
-
 	result.get('/v1/people/~').done(function(data) {
-		processLinkedInData(data);
+        console.log(data);
+        var linkedinInfo = document.getElementById('linkedin-info');
+        var firstName = data.evaluate('/person/first-name', data, null, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+        var lastName = data.evaluate('/person/last-name', data, null, XPathResult.ANY_TYPE, null).iterateNext().textContent;
+        linkedinInfo.innerText = firstName + ' ' + lastName;
+        linkedinInfo.textContent = firstName + ' ' + lastName;
 	});
-
 }
 
-function processLinkedInData(data) {
-	"use strict";
+function processYoutubeResult(result) {
+    "use strict";
 
-	var linkedinInfo = document.getElementById('linkedin-info');
-	var firstName = data.evaluate('/person/first-name', data, null, XPathResult.ANY_TYPE, null).iterateNext().textContent;
-	var lastName = data.evaluate('/person/last-name', data, null, XPathResult.ANY_TYPE, null).iterateNext().textContent;
-	linkedinInfo.innerText = firstName + ' ' + lastName;
-	linkedinInfo.textContent = firstName + ' ' + lastName;
-
+    console.log(result);
+    result.get('/youtube/v3/channels?part=contentDetails&mine=true').done(function(data) {
+        console.log(data);
+        var youtubeInfo = document.getElementById('youtube-info');
+        youtubeInfo.textContent = 'Channels: ' + data.items.length;
+    });
 }
